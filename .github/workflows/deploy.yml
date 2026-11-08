@@ -1,33 +1,25 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
-    branches: ['main', 'master']
+    branches:
+      - main
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
-  group: 'pages'
+  group: pages
   cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Install dependencies and Build
-        run: |
+      - run: |
           mkdir -p /tmp/dist_output
           if [ -f "package.json" ]; then
             rm -f bun.lock
@@ -36,22 +28,16 @@ jobs:
             touch dist/.nojekyll
             cp -r dist/* /tmp/dist_output/
           else
-            SUBFOLDER=$(find . -maxdepth 1 -type d \( -name "*dispensary*" -o -name "*hospital*" -o -name "*system*" \) ! -name ".*" | head -n 1)
-            if [ -n "$SUBFOLDER" ] && [ -d "$SUBFOLDER" ]; then
-              cd "$SUBFOLDER"
-              rm -f bun.lock
-              npm install
-              npm run build
-              touch dist/.nojekyll
-              cp -r dist/* /tmp/dist_output/
-            fi
+            cd *dispensary* || cd */
+            rm -f bun.lock
+            npm install
+            npm run build
+            touch dist/.nojekyll
+            cp -r dist/* /tmp/dist_output/
           fi
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: /tmp/dist_output
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -59,6 +45,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
