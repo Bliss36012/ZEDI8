@@ -1,0 +1,7 @@
+{
+  "name": "Neema Dispensary - Hospital Management System",
+  "description": "Comprehensive healthcare administration platform for Neema Dispensary in Nyamongo, Tarime, Tanzania featuring departmental payments, OPD/IPD, laboratory, pharmacy, labour ward, ultrasound, and direct WhatsApp Web communications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
